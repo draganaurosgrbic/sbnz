@@ -1,0 +1,14 @@
+<app-dialog title="Bill Renewal"
+[pending]="pending" [disabled]="amount.invalid" (confirmed)="confirm()">
+    <div>
+        <input
+        appOnlyNumbers
+        maxlength="9"
+        [formControl]="amount"
+        [classList]="'form-control'"
+        placeholder="Enter number of months">    
+        <app-rule-response *ngIf="response?.valid==false" [small]="true">
+            <app-bold>Error: </app-bold>{{response.message}}
+        </app-rule-response>    
+    </div>
+</app-dialog>

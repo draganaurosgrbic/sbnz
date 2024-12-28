@@ -1,0 +1,4 @@
+<app-list [pagination]="page" (changedPage)="fetchBills($event)"
+[pending]="pending" [length]="page.content.length" title="NO BILLS">
+    <app-bill *ngFor="let bill of page.content" [bill]="bill"></app-bill>
+</app-list>

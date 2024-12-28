@@ -1,0 +1,40 @@
+<div class="root">
+    <mat-card class="mat-elevation-z24">
+        <mat-card-content>
+            <h1>Log In</h1>
+            <form [formGroup]="loginForm">
+                <div [class.disabled]="pending">
+                    <mat-form-field>
+                        <mat-label>Email</mat-label>
+                        <input 
+                        formControlName="email" 
+                        matInput 
+                        placeholder="Enter email">
+                        <mat-error>
+                            Email is required!
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Password</mat-label>
+                        <input 
+                        type="password" 
+                        formControlName="password"
+                        matInput 
+                        placeholder="Enter password">
+                        <mat-error>
+                            Password is required!
+                        </mat-error>    
+                    </mat-form-field>
+                </div>
+                <div class="center">
+                    <button 
+                    *ngIf="!pending"
+                    (click)="login()"
+                    mat-raised-button 
+                    color="primary">Login</button>
+                    <app-spinner *ngIf="pending"></app-spinner>
+                </div>
+            </form>    
+        </mat-card-content>
+    </mat-card>
+</div>

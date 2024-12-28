@@ -1,0 +1,27 @@
+@import "../../../../styles/theme";
+
+.root{
+    display: inline-block;
+    text-align: left;
+    padding: 15px;
+    margin: 30px;
+}
+
+.mat-card{
+    width: 400px;
+    padding: 30px;
+}
+
+.details{
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.mat-drawer{
+    z-index: 100;
+    margin-top: 45px;
+}
+
+.gray{
+    color: $gray;
+}

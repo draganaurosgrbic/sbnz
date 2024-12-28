@@ -1,0 +1,76 @@
+<app-preloader *ngIf="pending"></app-preloader>
+<app-empty *ngIf="!pending && !report" title="ERROR LOADING REPORT"></app-empty>
+
+<div *ngIf="!pending">
+    <table class="table table-bordered mat-elevation-z24">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">RSD</th>
+            <th scope="col">EUR</th>
+            <th scope="col">USD</th>
+            <th scope="col">CHF</th>
+            <th scope="col">GBP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Active bills</th>
+            <td>{{report.rsd.activeCnt}}</td>
+            <td>{{report.eur.activeCnt}}</td>
+            <td>{{report.usd.activeCnt}}</td>
+            <td>{{report.chf.activeCnt}}</td>
+            <td>{{report.gbp.activeCnt}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Closed bills</th>
+            <td>{{report.rsd.closedCnt}}</td>
+            <td>{{report.eur.closedCnt}}</td>
+            <td>{{report.usd.closedCnt}}</td>
+            <td>{{report.chf.closedCnt}}</td>
+            <td>{{report.gbp.closedCnt}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Aborted bills share (%)</th>
+            <td>{{report.rsd.abortedShare | number: ".2"}}</td>
+            <td>{{report.eur.abortedShare | number: ".2"}}</td>
+            <td>{{report.usd.abortedShare | number: ".2"}}</td>
+            <td>{{report.chf.abortedShare | number: ".2"}}</td>
+            <td>{{report.gbp.abortedShare | number: ".2"}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Average bill base</th>
+            <td>{{report.rsd.baseAvg | number: ".2"}}</td>
+            <td>{{report.eur.baseAvg | number: ".2"}}</td>
+            <td>{{report.usd.baseAvg | number: ".2"}}</td>
+            <td>{{report.chf.baseAvg | number: ".2"}}</td>
+            <td>{{report.gbp.baseAvg | number: ".2"}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Average bill duration (months)</th>
+            <td>{{report.rsd.monthsAvg | number: ".2"}}</td>
+            <td>{{report.eur.monthsAvg | number: ".2"}}</td>
+            <td>{{report.usd.monthsAvg | number: ".2"}}</td>
+            <td>{{report.chf.monthsAvg | number: ".2"}}</td>
+            <td>{{report.gbp.monthsAvg | number: ".2"}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Average increase amount</th>
+            <td>{{report.rsd.increaseAvg | number: ".2"}}</td>
+            <td>{{report.eur.increaseAvg | number: ".2"}}</td>
+            <td>{{report.usd.increaseAvg | number: ".2"}}</td>
+            <td>{{report.chf.increaseAvg | number: ".2"}}</td>
+            <td>{{report.gbp.increaseAvg | number: ".2"}}</td>
+          </tr>
+          <tr>
+            <th scope="row">Average renewal amount (months)</th>
+            <td>{{report.rsd.renewAvg | number: ".2"}}</td>
+            <td>{{report.eur.renewAvg | number: ".2"}}</td>
+            <td>{{report.usd.renewAvg | number: ".2"}}</td>
+            <td>{{report.chf.renewAvg | number: ".2"}}</td>
+            <td>{{report.gbp.renewAvg | number: ".2"}}</td>
+          </tr>
+        </tbody>
+    </table>
+</div>
+  

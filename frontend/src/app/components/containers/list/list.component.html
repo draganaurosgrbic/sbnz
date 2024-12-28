@@ -1,0 +1,11 @@
+<app-preloader *ngIf="pending"></app-preloader>
+<app-empty *ngIf="!pending && !length" [title]="title"></app-empty>
+
+<div *ngIf="!pending && length">
+    <app-paginator
+    [pagination]="pagination"
+    [pending]="pending"
+    (changedPage)="changedPage.emit($event)"
+    ></app-paginator>
+    <ng-content></ng-content>
+</div>

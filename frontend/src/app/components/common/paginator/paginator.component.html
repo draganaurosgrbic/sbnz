@@ -1,0 +1,20 @@
+<app-spacer>
+    <span class="left">
+        <button 
+        *ngIf="!pending && !pagination.first"
+        (click)="changedPage.emit(pagination.pageable.pageNumber-1)"
+        mat-icon-button
+        matTooltip="Previous page">
+            <mat-icon [class.small]="small">navigate_before</mat-icon>
+        </button>
+    </span>
+    <span class="right">
+        <button 
+        *ngIf="!pending && !pagination.last"
+        (click)="changedPage.emit(pagination.pageable.pageNumber+1)"
+        mat-icon-button
+        matTooltip="Next page">
+            <mat-icon [class.small]="small">navigate_next</mat-icon>
+        </button>
+    </span>
+</app-spacer>    

@@ -1,0 +1,93 @@
+<app-dialog [title]="account.id ? 'Edit Account' : 'New Account'" 
+[pending]="pending" [disabled]="accountForm.invalid" (confirmed)="confirm()">
+    <form [formGroup]="accountForm" [class.disabled]="pending">
+        <div>
+            <mat-form-field>
+                <mat-label>First name</mat-label>
+                <input 
+                formControlName="firstName" 
+                matInput 
+                placeholder="Enter first name">
+                <mat-error>
+                    Valid first name is required!
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Last name</mat-label>
+                <input 
+                formControlName="lastName" 
+                matInput 
+                placeholder="Enter last name">
+                <mat-error>
+                    Valid last name is required!
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>JMBG</mat-label>
+                <input 
+                maxlength="13"
+                formControlName="jmbg" 
+                matInput 
+                placeholder="Enter JMBG">
+                <mat-error>
+                    Valid JMBG is required!
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field> 
+                <mat-label>Birth date</mat-label>
+                <input 
+                formControlName="birthDate"
+                matInput 
+                placeholder="Enter birth date"
+                [matDatepicker]="date">
+                <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
+                <mat-datepicker #date></mat-datepicker>
+                <mat-error>
+                    Valid birth date is required!
+                </mat-error>    
+            </mat-form-field>    
+        </div>
+        <div>
+            <mat-form-field>
+                <mat-label>Address</mat-label>
+                <input 
+                formControlName="address" 
+                matInput 
+                placeholder="Enter address">
+                <mat-error>
+                    Valid address is required!
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>City</mat-label>
+                <input 
+                formControlName="city" 
+                matInput 
+                placeholder="Enter city">
+                <mat-error>
+                    Valid city is required!
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Zip code</mat-label>
+                <input 
+                formControlName="zipCode" 
+                matInput 
+                placeholder="Enter zip code">
+                <mat-error>
+                    Valid zip code is required!
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input 
+                formControlName="email" 
+                matInput 
+                placeholder="Enter email">
+                <mat-error>
+                    Valid email is required!
+                </mat-error>
+            </mat-form-field>    
+        </div>
+    </form>
+</app-dialog>

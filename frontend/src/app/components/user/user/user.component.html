@@ -1,0 +1,17 @@
+<app-dialog [title]="user.id ? 'Edit Sluzbenik' : 'New Sluzbenik'"
+[pending]="pending" [disabled]="userForm.invalid" (confirmed)="confirm()">
+    <form [formGroup]="userForm">
+        <input
+        formControlName="email"
+        [classList]="'form-control'"
+        placeholder="Enter email">
+        <input
+        formControlName="firstName"
+        [classList]="'form-control'"
+        placeholder="Enter first name">   
+        <input
+        formControlName="lastName"
+        [classList]="'form-control'"
+        placeholder="Enter last name">    
+    </form>
+</app-dialog>

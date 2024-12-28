@@ -1,0 +1,117 @@
+<mat-toolbar color="primary" class="mat-elevation-z24">
+    <span>
+        <button
+        *ngIf="onRoute(routes.usersRoute)"
+        (click)="openUserDialog()"
+        mat-button
+        matTooltip="New Sluzbenik">
+            New Sluzbenik
+        </button>
+        <button
+        *ngIf="onRoute(routes.accountsRoute)"
+        (click)="openAccountDialog()"
+        mat-button
+        matTooltip="New Account">
+            New Account
+        </button>
+        <button
+        *ngIf="onRoute(routes.accountRoute)"
+        (click)="openBillDialog()"
+        mat-button
+        matTooltip="New Saving Bill">
+            New Saving Bill
+        </button>
+        
+        <button
+        *ngIf="onRoute(routes.notificationsRoute) && role===roles.ADMIN"
+        [routerLink]="routes.usersRoute"
+        mat-button
+        matTooltip="Users">
+            Users
+        </button>
+        <button
+        *ngIf="onRoute(routes.reportRoute)"
+        [routerLink]="routes.accountsRoute"
+        mat-button
+        matTooltip="Accounts">
+            Accounts
+        </button>
+        <button
+        *ngIf="onRoute(routes.billsRoute, true) || (onRoute(routes.notificationsRoute) && role===roles.KLIJENT)"
+        [routerLink]="routes.accountRoute"
+        mat-button
+        matTooltip="My account">
+            Account
+        </button>
+
+        <button
+        *ngIf="onRoute(routes.accountRoute)"
+        [routerLink]="routes.billsRoute + '/rsd'"
+        mat-button
+        matTooltip="RSD bills">
+            RSD bills
+        </button>
+        <button
+        *ngIf="onRoute(routes.accountRoute)"
+        [routerLink]="routes.billsRoute + '/foreign'"
+        mat-button
+        matTooltip="Foreign bills">
+            Foreign bills
+        </button>
+
+        <button
+        *ngIf="onRoute(routes.accountRoute) || onRoute(routes.usersRoute)"
+        [routerLink]="routes.notificationsRoute"
+        mat-button
+        matTooltip="Notifications">
+            Notifications
+        </button>
+    </span>
+    <span class="main">
+        <form *ngIf="onRoute(routes.usersRoute) || onRoute(routes.accountsRoute)" (ngSubmit)="announceSearchData()">
+            <input
+            [formControl]="search"
+            [classList]="'form-control'"
+            placeholder="Search...">  
+        </form> 
+        <select *ngIf="onRoute(routes.billsRoute, true)" [formControl]="search" [classList]="'form-control'" (change)="announceSearchData()">
+            <option value="" hidden>Select bill status</option>
+            <option value="">All</option>
+            <option value="0">Active</option>
+            <option value="1">Closed</option>
+            <option value="2">Aborted</option>
+        </select>           
+        <button *ngIf="!onRoute(routes.loginRoute)" [matMenuTriggerFor]="more" mat-icon-button matTooltip="More">
+            <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #more="matMenu">
+            <button (click)="openPasswordDialog()" mat-menu-item>
+                <mat-icon>account_circle</mat-icon>
+                <span>Password change</span>
+            </button>
+            <button (click)="signOut()" mat-menu-item>
+                <mat-icon>logout</mat-icon>
+                <span>Sign out</span>
+            </button>
+            <button *ngIf="!onRoute(routes.reportRoute) && role===roles.SLUZBENIK" [routerLink]="routes.reportRoute" mat-menu-item>
+                <mat-icon>report</mat-icon>
+                <span>Base report</span>
+            </button>
+            <button *ngIf="!onRoute(routes.reportRoute) && role===roles.SLUZBENIK" [matMenuTriggerFor]="reports" mat-menu-item>
+                <mat-icon>receipt</mat-icon>
+                <span>Active clients reports</span>
+            </button>
+            <mat-menu #reports="matMenu">
+                <button (click)="announceReport(1)" mat-menu-item>
+                    Report one
+                </button>
+                <button (click)="announceReport(2)" mat-menu-item>
+                    Report two
+                </button>
+                <button (click)="announceReport(3)"mat-menu-item>
+                    Report three
+                </button>
+            </mat-menu>
+        </mat-menu>
+    </span>
+</mat-toolbar>

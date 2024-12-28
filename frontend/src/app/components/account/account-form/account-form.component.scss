@@ -1,0 +1,13 @@
+form{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 700px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+form > div{
+    width: 45%;
+    margin: 10px;
+}

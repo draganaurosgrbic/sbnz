@@ -1,0 +1,26 @@
+@import "../../../../styles/theme";
+
+.root{
+    border: 1px solid $gray;
+    border-radius: 5px;
+    margin: 20px;
+}
+
+.mat-card{
+    padding: 0
+}
+
+.details{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $gray;
+    opacity: 0.8;
+    height: 30px;
+    padding: 5px;
+}
+
+.text{
+    padding: 10px;
+}

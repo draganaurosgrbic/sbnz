@@ -1,0 +1,30 @@
+<div class="root mat-elevation-z24" [class.big]="myAccount">
+    <mat-card>
+        <mat-card-content>
+            <h2>Account #{{account.id}}</h2>
+            <div>
+                <app-bold>Opened on: </app-bold>{{account.date | date: "dd MMM yyyy"}}<br>
+                <app-bold>Current balance: </app-bold>{{account.balance | number: ".2"}} RSD<br>
+                <app-bold>Number of saving bills: </app-bold>{{account.billsCount}}<br><br><br>
+                <app-bold>Client: </app-bold>{{account.firstName}} {{account.lastName}}<br>
+                <app-bold>JMBG: </app-bold>{{account.jmbg}}<br>
+                <app-bold>Birth date: </app-bold>{{account.birthDate | date: "dd MMM yyyy"}}<br>
+                <app-bold>Address: </app-bold>{{account.address}}, {{account.zipCode}} {{account.city}}<br>
+                <app-bold>Contact: </app-bold>{{account.email}}<br>    
+            </div>
+            <app-spacer *ngIf="!myAccount">
+                <span></span>
+                <span>
+                    <button 
+                    (click)="edit()" mat-icon-button matTooltip="Edit" color="primary">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button 
+                    (click)="delete()" mat-icon-button matTooltip="Delete" color="warn">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </span>
+            </app-spacer>
+        </mat-card-content>
+    </mat-card>
+</div>

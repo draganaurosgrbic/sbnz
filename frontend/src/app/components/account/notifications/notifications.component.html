@@ -1,0 +1,20 @@
+<div>
+    <app-list [pagination]="page" (changedPage)="fetchNotifications($event)"
+    [pending]="pending" [length]="page.content.length" title="NO NOTIFICATIONS">
+        <app-details *ngFor="let notification of page.content; let i = index"
+        [index]="i+1" [date]="notification.date" [time]="true">
+            <app-spacer>
+                <span>{{notification.message}}</span>
+                <span>
+                    <button 
+                    (click)="delete(notification.id)"
+                    mat-icon-button 
+                    matTooltip="Delete"
+                    color="warn">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </span>
+            </app-spacer>
+        </app-details>
+    </app-list>
+</div>

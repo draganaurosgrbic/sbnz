@@ -1,0 +1,18 @@
+@import "../../../../styles/theme";
+
+.title{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: $primary;
+    height: 60px;
+}
+
+.warn{
+    background-color: $warn;
+}
+
+.content{
+    padding: 20px;
+}

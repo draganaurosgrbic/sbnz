@@ -1,0 +1,16 @@
+<div class="title" [class.warn]="warn">
+    <h3>{{title}}</h3>
+</div>
+
+<div class="content">
+    <ng-content></ng-content>
+    <app-spacer>
+        <span>
+            <button *ngIf="!pending" (click)="dialogRef.close()" cdkFocusInitial mat-button>Cancel</button>
+        </span>
+        <span>
+            <button *ngIf="!pending" (click)="confirmed.emit()" [disabled]="disabled" mat-button>Confirm</button>
+            <app-spinner *ngIf="pending"></app-spinner>
+        </span>
+    </app-spacer>
+</div>

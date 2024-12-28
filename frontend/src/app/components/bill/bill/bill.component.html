@@ -1,0 +1,62 @@
+<div class="root mat-elevation-z24">
+    <mat-drawer-container>
+        <mat-card>
+            <mat-card-content>
+                <h3>Bill #{{bill.id}}</h3>
+                <div class="details">
+                    <app-bold>Status: </app-bold>{{bill.status}}<br>
+                    <app-bold>Curreny: </app-bold>{{bill.type}}<br>
+                    <app-bold>Duration: </app-bold>{{bill.startDate | date: "dd MMM yyyy"}} - {{bill.endDate | date: "dd MMM yyyy"}}<br>
+                    <app-bold>Base balance: </app-bold>{{bill.base | number: ".2"}} {{bill.type}}<br>
+                    <app-bold>Interest: </app-bold>{{(bill.interest * 100) | number: ".2"}}%<br>
+                    <app-bold>Current balance: </app-bold>{{bill.balance | number: ".2"}} {{bill.type}}<br>    
+                </div>
+                <app-spacer>
+                    <span>
+                        <button *ngIf="bill.status === 'ACTIVE'"
+                        (click)="transction()" mat-icon-button matTooltip="Transaction" color="primary">
+                            <mat-icon>attach_money</mat-icon>
+                        </button>
+                        <button *ngIf="bill.status === 'ACTIVE'"
+                        (click)="renewal()" mat-icon-button matTooltip="Renewal" color="accent">
+                            <mat-icon>autorenew</mat-icon>
+                        </button>
+                        <button *ngIf="bill.status === 'ACTIVE'"
+                        (click)="close()" mat-icon-button matTooltip="Close" color="warn">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </span>
+                    <span>
+                        <button 
+                        (click)="drawerService.closeOthers(drawer); drawer.toggle()"
+                        mat-icon-button matTooltip="More" class="gray">
+                            <mat-icon>{{drawer.opened ? 'fullscreen_exit' : 'details'}}</mat-icon>
+                        </button>
+                    </span>
+                </app-spacer>
+            </mat-card-content>
+        </mat-card>    
+    </mat-drawer-container>
+    <mat-drawer #drawer position="end" mode="side" class="mat-elevation-z24">
+        <mat-tab-group>
+            <mat-tab [label]="'Transactions'">
+                <app-details 
+                *ngFor="let transaction of bill.transactions; let i = index"
+                [index]="i+1" [date]="transaction.date">
+                    <app-bold>Date: </app-bold>{{transaction.date | date: "dd MMM yyyy"}}<br>
+                    <app-bold>Amount: </app-bold>{{transaction.amount}} {{bill.type}}<br>
+                </app-details>
+                <app-empty *ngIf="!bill.transactions.length" title="NO TRANSACTIONS"></app-empty>
+            </mat-tab>
+            <mat-tab [label]="'Renewals'">
+                <app-details 
+                *ngFor="let renewal of bill.renewals; let i = index"
+                [index]="i+1" [date]="renewal.date">
+                    <app-bold>Date: </app-bold>{{renewal.date | date: "dd MMM yyyy"}}<br>
+                    <app-bold>Amount: </app-bold>{{renewal.amount}}<br>
+                </app-details>
+                <app-empty *ngIf="!bill.renewals.length" title="NO RENEWALS"></app-empty>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-drawer>
+</div>

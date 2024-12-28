@@ -1,0 +1,17 @@
+@import "../../../../styles/theme";
+
+div{
+    padding: 40px;
+}
+
+table{
+    background-color: whitesmoke;
+}
+
+thead > tr > th, td{
+    text-align: center;
+}
+
+tbody > tr > th{
+    max-width: 120px;
+}

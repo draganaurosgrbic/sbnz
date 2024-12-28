@@ -1,0 +1,51 @@
+<app-dialog [pending]="pending" [disabled]="billForm.invalid"
+(confirmed)="response?.valid ? accept() : send()" title="New Saving Bill">
+    <form [formGroup]="billForm" [class.disabled]="pending || response?.valid">
+        <mat-form-field>
+            <mat-label>Bill type</mat-label>
+            <mat-select formControlName="type" placeholder="Select type">
+                <mat-option value="RSD">RSD</mat-option>
+                <mat-option value="EUR">EUR</mat-option>
+                <mat-option value="USD">USD</mat-option>
+                <mat-option value="CHF">CHF</mat-option>
+                <mat-option value="GBP">GBP</mat-option>
+            </mat-select>
+            <mat-error>
+                Bill type is required!
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Base balance</mat-label>
+            <input 
+            appOnlyNumbers
+            formControlName="base" 
+            matInput 
+            placeholder="Enter base balance">
+            <mat-error>
+                Valid base balance is required!
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Number of months</mat-label>
+            <input 
+            appOnlyNumbers
+            formControlName="months" 
+            matInput 
+            placeholder="Enter number of months">
+            <mat-error>
+                Valid number of months is required!
+            </mat-error>
+        </mat-form-field>
+    </form>
+    <div *ngIf="response">
+        <h5>Response Terms</h5>
+        <app-rule-response *ngIf="response?.valid==false">
+            <app-bold>Error: </app-bold>{{response.message}}
+        </app-rule-response>
+        <app-rule-response *ngIf="response?.valid">
+            <app-bold>NKS: </app-bold>{{response.nks}}%<br>
+            <app-bold>EKS: </app-bold>{{response.eks * 100}}%<br>
+            <app-bold>Reward: </app-bold>{{response.reward}} RSD<br>
+        </app-rule-response>
+    </div>
+</app-dialog>

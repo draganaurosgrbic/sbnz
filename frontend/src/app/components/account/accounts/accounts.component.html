@@ -1,0 +1,4 @@
+<app-list [pagination]="page" (changedPage)="fetchAccounts($event)"
+[pending]="pending" [length]="page.content.length" title="NO ACCOUNTS">
+    <app-account *ngFor="let account of page.content" [account]="account"></app-account>
+</app-list>
