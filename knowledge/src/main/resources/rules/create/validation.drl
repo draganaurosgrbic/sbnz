@@ -1,0 +1,190 @@
+package rules
+import com.example.demo.model.Account
+import com.example.demo.model.Bill
+import com.example.demo.model.BillStatus
+import com.example.demo.model.BillType
+import com.example.demo.rules.BillRequest
+import com.example.demo.rules.BillResponse
+import com.example.demo.service.ExchangeRateService
+
+global ExchangeRateService rateService
+
+
+rule "RSD - base less than 10.000 RSD"
+	agenda-group "create-rules"
+
+    when
+        BillRequest(type == BillType.RSD, base < 10000)
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setMessage("Base can't be less than 10.000 RSD.");}
+
+end
+
+rule "RSD - base more than 10.000.000 RSD"
+	agenda-group "create-rules"
+
+    when
+        BillRequest(type == BillType.RSD, base > 10000000)
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setMessage("Base can't be more than 10.000.000 RSD.");}
+
+end
+
+rule "RSD - duration less than 4 months"
+	agenda-group "create-rules"
+
+    when    
+        BillRequest(type == BillType.RSD, months < 4)        
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setMessage("Duration can't be less than 4 months.");}
+
+end
+
+rule "RSD - duration more than 42 months"
+	agenda-group "create-rules"
+
+    when    
+        BillRequest(type == BillType.RSD, months > 42)
+		$response: BillResponse(!valid, message == null)
+    then    
+        modify($response){setMessage("Duration can't be more than 42 months.");}
+
+end
+
+rule "RSD - main balance isn't at least 200 RSD more than base"
+	agenda-group "create-rules"
+
+    when
+    	Account($balance: balance)
+        BillRequest(type == BillType.RSD, $balance - base < 200)
+		$response: BillResponse(!valid, message == null)
+    then    
+        modify($response){setMessage("Main balance must be at least 200 RSD more than base.");}
+
+end
+
+rule "RSD - underage client and base more than 100.000 RSD"
+	agenda-group "create-rules"
+
+    when
+    	Account(underage())
+        BillRequest(type == BillType.RSD, base > 100000)
+		$response: BillResponse(!valid, message == null)
+    then    
+        modify($response){setMessage("Base can't be more than 100.000 RSD for underage clients.");}
+
+end
+
+rule "RSD - underage client and 2 more active bills"
+	agenda-group "create-rules"
+
+    when
+    	Account(underage(), $bills: bills)
+        BillRequest(type == BillType.RSD)
+        Number(intValue > 1) from accumulate(
+        	Bill($b: this, status == BillStatus.ACTIVE, type == BillType.RSD) from $bills,
+        	count($b)
+        )
+		$response: BillResponse(!valid, message == null)
+    then    
+        modify($response){setMessage("Underage clients can't have more than 2 active RSD bills.");}
+
+end
+
+rule "Foreign - base less than 100 units"
+	agenda-group "create-rules"
+
+    when
+        BillRequest(type != BillType.RSD, base < 100)
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setMessage("Base can't be less than 100 currency units.");}
+
+end
+
+rule "Foreign - base more than 100.000 units"
+	agenda-group "create-rules"
+
+    when
+        BillRequest(type != BillType.RSD, base > 100000)
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setMessage("Base can't be more than 100.000 currency units.");}
+
+end
+
+rule "Foreign - duration less than 2 months"
+	agenda-group "create-rules"
+
+    when    
+        BillRequest(type != BillType.RSD, months < 2)        
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setMessage("Duration can't be less than 2 months.");}
+
+end
+
+rule "Foreign - duration more than 36 months"
+	agenda-group "create-rules"
+
+    when    
+        BillRequest(type != BillType.RSD, months > 36)
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setMessage("Duration can't be more than 36 months.");}
+
+end
+
+rule "Foreign - main balance isn't at least 1000 RSD more than base"
+	agenda-group "create-rules"
+
+    when
+    	Account($balance: balance)
+        BillRequest(type != BillType.RSD, $balance - rateService.convertToRSD(type, base) < 1000)
+		$response: BillResponse(!valid, message == null)
+    then    
+        modify($response){setMessage("Main balance must be at least 1000 RSD more than base.");}
+
+end
+
+rule "Foreign - underage client and base more than 1000 units"
+	agenda-group "create-rules"
+
+    when
+    	Account(underage())
+        BillRequest(type != BillType.RSD, base > 1000)
+		$response: BillResponse(!valid, message == null)
+    then    
+        modify($response){setMessage("Base can't be more than 1000 currency units for underage clients.");}
+
+end
+
+rule "Foreign - underage client and 1 more active bill"
+	agenda-group "create-rules"
+
+    when
+    	Account(underage(), $bills: bills)
+        BillRequest(type != BillType.RSD)
+        Number(intValue > 0) from accumulate(
+        	Bill($b: this, status == BillStatus.ACTIVE, type != BillType.RSD) from $bills,
+        	count($b)
+        )
+		$response: BillResponse(!valid, message == null)
+    then    
+        modify($response){setMessage("Underage clients can't have more than 1 active foreign bill.");}
+
+end
+
+rule "Valid params"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(!valid, message == null)
+    then
+        modify($response){setValid(true);}
+
+end
+

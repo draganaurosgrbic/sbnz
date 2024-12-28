@@ -1,0 +1,315 @@
+package rules
+import com.example.demo.model.Bill
+import com.example.demo.model.BillType
+import com.example.demo.model.Transaction
+import com.example.demo.rules.IncreaseResponse
+
+rule "1.5% decrease pt4"
+	agenda-group "increase-rules"
+	salience ($val2)
+
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type == BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 9) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.35 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.015 * $interest);}
+end
+
+rule "1.5% decrease pt5"
+	agenda-group "increase-rules"
+	salience ($val2)
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type != BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 8) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.3 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.015 * $interest);}
+end
+
+rule "2% decrease pt4"
+	agenda-group "increase-rules"
+	salience ($val2)
+
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type == BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 10) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.4 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.02 * $interest);}
+end
+
+rule "2% decrease pt5"
+	agenda-group "increase-rules"
+	salience ($val2)
+
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type != BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 9) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.35 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.02 * $interest);}
+end
+
+rule "2.5% decrease pt4"
+	agenda-group "increase-rules"
+	salience ($val2)
+
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type == BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 11) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.45 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.025 * $interest);}
+end
+
+rule "2.5% decrease pt5"
+	agenda-group "increase-rules"
+	salience ($val2)
+
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type != BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 10) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.4 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.025 * $interest);}
+end
+
+rule "3% decrease pt4"
+	agenda-group "increase-rules"
+	salience ($val2)
+
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type == BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 12) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.5 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.03 * $interest);}
+end
+
+rule "3% decrease pt5"
+	agenda-group "increase-rules"
+	salience ($val2)
+
+    when
+        Bill($main: account.balance, $interest: interest, $bills: account.bills)
+		accumulate(
+			Bill(type != BillType.RSD, $transactions: transactions) from $bills and
+			accumulate(
+         		Transaction($temp: amount, passedMonths() <= 11) from $transactions,
+         		$avg: average($temp),
+         		$sum: sum($temp)
+         	),
+			$val1: average($avg),
+			$val2: sum($sum);
+			$val1 > 0.45 * $main
+		)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.03 * $interest);}
+end
+
+rule "3% decrease pt1"
+	agenda-group "increase-rules"
+
+    when
+		Bill($base: base, $interest: interest)
+		Double(this > 0.35 * $base)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.03 * $interest);}
+end
+
+rule "3% decrease pt2"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type == BillType.RSD, balance > 330000, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.03 * $interest);}
+end
+
+rule "3% decrease pt3"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type != BillType.RSD, balance > 3300, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.03 * $interest);}
+end
+
+rule "2.5% decrease pt1"
+	agenda-group "increase-rules"
+
+    when
+		Bill($base: base, $interest: interest)
+		Double(this > 0.3 * $base)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.025 * $interest);}
+end
+
+rule "2.5% decrease pt2"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type == BillType.RSD, balance > 270000, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.025 * $interest);}
+end
+
+rule "2.5% decrease pt3"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type != BillType.RSD, balance > 2700, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.025 * $interest);}
+end
+
+rule "2% decrease pt1"
+	agenda-group "increase-rules"
+
+    when
+    	Bill($base: base, $interest: interest)
+		Double(this > 0.25 * $base)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.02 * $interest);}
+end
+
+rule "2% decrease pt2"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type == BillType.RSD, balance > 220000, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.02 * $interest);}
+end
+
+rule "2% decrease pt3"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type != BillType.RSD, balance > 2200, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.02 * $interest);}
+end
+
+rule "1.5% decrease pt1"
+	agenda-group "increase-rules"
+
+    when
+    	Bill($base: base, $interest: interest)
+		Double(this > 0.2 * $base)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.015 * $interest);}
+end
+
+rule "1.5% decrease pt2"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type == BillType.RSD, balance > 180000, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.015 * $interest);}
+end
+
+rule "1.5% decrease pt3"
+	agenda-group "increase-rules"
+
+    when
+        Bill(type != BillType.RSD, balance > 1800, $interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.015 * $interest);}
+end
+
+rule "1% decrease"
+	agenda-group "increase-rules"
+
+    when
+		Bill($interest: interest)
+        $response: IncreaseResponse(baseUpdate != null, interestUpdate == null)
+    then
+        modify($response){setInterestUpdate(0.01 * $interest);}
+end
+

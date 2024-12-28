@@ -1,0 +1,166 @@
+package rules
+import com.example.demo.model.Account
+import com.example.demo.model.BillType
+import com.example.demo.model.Notification
+import com.example.demo.events.CreateBillEvent
+import com.example.demo.events.IncreaseBillEvent
+import com.example.demo.events.RenewBillEvent
+import com.example.demo.events.CloseBillEvent
+import com.example.demo.events.SuspiciousClientEvent
+import com.example.demo.service.NotificationService
+
+global NotificationService notificationService
+global Account account
+
+
+rule "Create and close bill within 24h"
+	no-loop
+	
+    when
+        CreateBillEvent($id: bill.id)
+        CloseBillEvent(bill.id == $id) over window:time(24h)
+    then
+		notificationService.save(new Notification(account, 
+		"You opened saving bill #" + $id + " and closed it within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "Increase and close bill within 24h"
+	no-loop
+	
+    when
+        IncreaseBillEvent($id: transaction.bill.id)
+        CloseBillEvent(bill.id == $id) over window:time(24h)
+    then
+		notificationService.save(new Notification(account, 
+		"You increased saving bill #" + $id + " and closed it within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "Renew and close bill within 24h"
+	no-loop
+	
+    when
+        RenewBillEvent($id: renewal.bill.id)
+        CloseBillEvent(bill.id == $id) over window:time(24h)
+    then
+		notificationService.save(new Notification(account, 
+		"You renewed saving bill #" + $id + " and closed it within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "Closing more than 3 RSD bills within 24h"
+	no-loop
+	
+    when
+    	accumulate(
+    		CloseBillEvent($e: this, bill.type == BillType.RSD, bill.base > 25000) over window:time(24h),
+    		$cnt: count($e);
+    		$cnt > 3
+    	)
+    then
+		notificationService.save(new Notification(account,
+		"You closed " + $cnt + " RSD bills with base larger than 25.000 RSD within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "Closing more than 2 foreign bills within 24h"
+	no-loop
+	
+    when
+    	accumulate(
+    		CloseBillEvent($e: this, bill.type != BillType.RSD, bill.base > 250) over window:time(24h),
+    		$cnt: count($e);
+    		$cnt > 2
+    	)
+    then
+		notificationService.save(new Notification(account, 
+		"You closed " + $cnt + " foreign bills with base larger than 250 currency units within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "More than 3 large RSD increases within 24h"
+	no-loop
+	
+    when
+    	accumulate(
+    		IncreaseBillEvent($e: this, transaction.bill.type == BillType.RSD, transaction.amount > 30000) over window:time(24h),
+    		$cnt: count($e);
+    		$cnt > 3
+    	)
+    then
+		notificationService.save(new Notification(account, 
+		"You increased " + $cnt + " RSD bills by more than 30.000 within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "More than 2 large foreign increases within 24h"
+	no-loop
+	
+    when
+    	accumulate(
+    		IncreaseBillEvent($e: this, transaction.bill.type != BillType.RSD, transaction.amount > 300) over window:time(24h),
+    		$cnt: count($e);
+    		$cnt > 2
+    	)
+    then
+		notificationService.save(new Notification(account, 
+		"You increased " + $cnt + " foreign bills by more than 300 currency units within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "More than 3 large RSD renewals within 24h"
+	no-loop
+	
+    when
+    	accumulate(
+    		RenewBillEvent($e: this, renewal.bill.type == BillType.RSD, renewal.amount > 9) over window:time(24h),
+    		$cnt: count($e);
+    		$cnt > 3
+    	)
+    then
+		notificationService.save(new Notification(account, 
+		"You renewed " + $cnt + " RSD bills by more than 9 months within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "More than 2 large foreign renewals within 24h"
+	no-loop
+	
+    when
+    	accumulate(
+    		RenewBillEvent($e: this, renewal.bill.type != BillType.RSD, renewal.amount > 6) over window:time(24h),
+    		$cnt: count($e);
+    		$cnt > 2
+    	)
+    then
+		notificationService.save(new Notification(account, 
+		"You renewed " + $cnt + " foreign bills by more than 6 months within 24h. Was this you?"));
+		insert (new SuspiciousClientEvent());
+
+end
+
+rule "Suspicious client"
+	no-loop
+	
+    when
+    	accumulate(
+    		SuspiciousClientEvent($e: this) over window:time(72h),
+    		$cnt: count($e);
+    		$cnt >= 3
+    	)
+    then
+		notificationService.save(new Notification(null, 
+		"Client " + account.getUser().getFirstName() + " " + account.getUser().getLastName() + " has been warned " + $cnt + " times for suspicious actions in the last 72h."));
+
+end
+
+

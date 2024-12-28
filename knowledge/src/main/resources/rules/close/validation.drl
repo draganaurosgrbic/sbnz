@@ -1,0 +1,109 @@
+package rules
+import com.example.demo.model.Bill
+import com.example.demo.model.BillStatus
+import com.example.demo.model.BillType
+import com.example.demo.rules.CloseResponse
+
+
+rule "Passed time more than 80%"
+	agenda-group "close-rules"
+
+    when
+        Bill(passedTime() > 0.8)
+        $response: CloseResponse(!valid, message == null)
+    then
+        modify($response){setMessage("You can't close bill with passed time more than 80%.");}
+
+end
+
+rule "RSD - base less than 20.000 RSD"
+	agenda-group "close-rules"
+
+    when
+        Bill(type == BillType.RSD, base < 20000)
+        $response: CloseResponse(!valid, message == null)
+    then
+        modify($response){setMessage("You can't close RSD bill with base less than 20.000 RSD.");}
+
+end
+
+rule "RSD - the only active bill"
+	agenda-group "close-rules"
+
+    when
+        Bill(type == BillType.RSD, $bills: account.bills)
+        Number(intValue <= 1) from accumulate(
+        	Bill($b: this, status == BillStatus.ACTIVE, type == BillType.RSD) from $bills,
+        	count($b)
+        )
+        $response: CloseResponse(!valid, message == null)
+    then
+        modify($response){setMessage("You can't close the only active RSD bill.");}
+
+end
+
+rule "RSD - 6 more closed bills"
+	agenda-group "close-rules"
+
+    when
+        Bill(type == BillType.RSD, $bills: account.bills)
+        Number(intValue >= 6) from accumulate(
+        	Bill($b: this, status == BillStatus.ABORTED, type == BillType.RSD) from $bills,
+        	count($b)
+        )
+        $response: CloseResponse(!valid, message == null)
+    then
+        modify($response){setMessage("You can't close more than 6 RSD bills.");}
+
+end
+
+rule "Foreign - base less than 200 units"
+	agenda-group "close-rules"
+
+    when
+        Bill(type != BillType.RSD, base < 200)
+        $response: CloseResponse(!valid, message == null)
+    then
+        modify($response){setMessage("You can't close foreign bill with base less than 200 currency units.");}
+
+end
+
+rule "Foreign - the only active bill"
+	agenda-group "close-rules"
+
+    when
+        Bill(type != BillType.RSD, $bills: account.bills)
+        Number(intValue <= 1) from accumulate(
+        	Bill($b: this, status == BillStatus.ACTIVE, type != BillType.RSD) from $bills,
+        	count($b)
+        )
+        $response: CloseResponse(!valid, message == null)
+    then
+        modify($response){setMessage("You can't close the only active foreign bill.");}
+
+end
+
+rule "Foreign - 4 more closed bills"
+	agenda-group "close-rules"
+
+    when
+        Bill(type != BillType.RSD, $bills: account.bills)
+        Number(intValue >= 4) from accumulate(
+        	Bill($b: this, status == BillStatus.ABORTED, type != BillType.RSD) from $bills,
+        	count($b)
+        )
+        $response: CloseResponse(!valid, message == null)
+    then
+        modify($response){setMessage("You can't close more than 4 foreign bills.");}
+
+end
+
+rule "Valid params"
+	agenda-group "close-rules"
+
+	when
+        $response: CloseResponse(!valid, message == null)
+	then
+		modify($response){setValid(true);}
+
+end

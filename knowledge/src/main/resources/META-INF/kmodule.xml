@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
+    <kbase name="create" packages="rules.create">
+        <ksession name="create-rules"/>
+    </kbase>
+    <kbase name="increase" packages="rules.increase">
+        <ksession name="increase-rules"/>
+    </kbase>
+    <kbase name="renew" packages="rules.renew">
+        <ksession name="renew-rules"/>
+    </kbase>
+    <kbase name="close" packages="rules.close">
+        <ksession name="close-rules"/>
+    </kbase>
+    <kbase name="report" packages="rules.report">
+        <ksession name="report-rules"/>
+    </kbase>
+   <kbase name="events" packages="rules.events" eventProcessingMode="stream">
+		<ksession name="events-rules-pseudo" clockType="pseudo"/>
+		<ksession name="events-rules-realtime" clockType="realtime"/>
+	</kbase> 
+</kmodule>

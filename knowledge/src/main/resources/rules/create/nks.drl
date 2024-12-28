@@ -1,0 +1,74 @@
+package rules
+import com.example.demo.model.BillType
+import com.example.demo.rules.BillRequest
+import com.example.demo.rules.BillResponse
+import com.example.demo.service.NksValuesService
+
+global NksValuesService nksValuesService
+
+
+rule "NKS of 1.5%"
+	agenda-group "create-rules"
+
+    when
+    	BillRequest(
+    		months > nksValuesService.monthsRate(1, type) ||
+    		base / months > nksValuesService.baseRate(1, type)
+    	)
+		$response: BillResponse(valid, nks == null)
+    then
+    	modify($response){setNks(1.5)}
+        
+end
+
+rule "NKS of 1.2%"
+	agenda-group "create-rules"
+
+    when
+    	BillRequest(
+    		months > nksValuesService.monthsRate(2, type) || 
+			base / months > nksValuesService.baseRate(2, type)
+    	)
+		$response: BillResponse(valid, nks == null)
+    then
+    	modify($response){setNks(1.2)}
+        
+end
+
+rule "NKS of 1.0%"
+	agenda-group "create-rules"
+
+    when
+    	BillRequest(
+    		months > nksValuesService.monthsRate(3, type) ||
+			base / months > nksValuesService.baseRate(3, type)
+    	)
+		$response: BillResponse(valid, nks == null)
+    then
+    	modify($response){setNks(1.0)}
+        
+end
+
+rule "NKS of 0.8%"
+	agenda-group "create-rules"
+
+    when
+    	BillRequest(
+    		months > nksValuesService.monthsRate(4, type) ||
+    		base / months > nksValuesService.baseRate(4, type)
+    	)
+		$response: BillResponse(valid, nks == null)
+    then
+    	modify($response){setNks(0.8)}
+        
+end
+
+rule "NKS of 0.5%"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(valid, nks == null)
+    then
+    	modify($response){setNks(0.5)}
+        
+end

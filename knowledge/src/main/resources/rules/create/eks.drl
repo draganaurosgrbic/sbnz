@@ -1,0 +1,197 @@
+package rules
+import com.example.demo.model.Account
+import com.example.demo.model.Bill
+import com.example.demo.model.BillStatus
+import com.example.demo.model.BillType
+import com.example.demo.rules.BillRequest
+import com.example.demo.rules.BillResponse
+
+
+rule "EKS of 100% pt1"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(points == 5, eks == null)
+    then
+    	modify($response){setEks(1.0), setReward(5000);}
+
+end
+
+rule "EKS of 100% pt2"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type == BillType.RSD)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, type == BillType.RSD) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(1.0), setReward(5000);}
+
+end
+
+rule "EKS of 100% pt3"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type != BillType.RSD)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, type != BillType.RSD) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(1.0), setReward(5000);}
+
+end
+
+rule "EKS of 98% pt1"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(points == 4, eks == null)
+    then
+    	modify($response){setEks(0.98), setReward(2000);}
+
+end
+
+rule "EKS of 98% pt2"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type == BillType.EUR, $type: type)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, type == $type) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(0.98), setReward(2000);}
+
+end
+
+rule "EKS of 98% pt3"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type == BillType.USD, $type: type)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, type == $type) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(0.98), setReward(2000);}
+
+end
+
+rule "EKS of 95% pt1"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(points == 3, eks == null)
+    then
+    	modify($response){setEks(0.95), setReward(1000);}
+
+end
+
+rule "EKS of 95% pt2"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type == BillType.CHF, $type: type)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, type == $type) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(0.95), setReward(1000);}
+
+end
+
+rule "EKS of 95% pt3"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type == BillType.GBP, $type: type)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, type == $type) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(0.95), setReward(1000);}
+
+end
+
+rule "EKS of 90% pt1"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(points == 2, eks == null)
+    then
+    	modify($response){setEks(0.9), setReward(500);}
+
+end
+
+rule "EKS of 90% pt2"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type == BillType.RSD, $type: type)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, status == BillStatus.ACTIVE, type == BillType.RSD) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(0.9), setReward(500);}
+
+end
+
+rule "EKS of 87% pt1"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(points == 1, eks == null)
+    then
+    	modify($response){setEks(0.87), setReward(200);}
+
+end
+
+rule "EKS of 87% pt2"
+	agenda-group "create-rules"
+
+    when
+    	Account($bills: bills)
+    	BillRequest(type != BillType.RSD, $type: type)
+		Number(intValue == 0) from accumulate(
+			Bill($b: this, status == BillStatus.ACTIVE, type != BillType.RSD) from $bills,
+			count($b) 
+		)
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(0.87), setReward(200);}
+
+end
+
+rule "EKS of 85%"
+	agenda-group "create-rules"
+
+    when
+		$response: BillResponse(points != null, eks == null)
+    then
+    	modify($response){setEks(0.85), setReward(0);}
+
+end
+

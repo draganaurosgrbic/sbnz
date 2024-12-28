@@ -1,0 +1,226 @@
+package rules
+import com.example.demo.model.Bill
+import com.example.demo.model.BillType
+import com.example.demo.model.Transaction
+import com.example.demo.rules.IncreaseResponse
+
+
+rule "90% increase pt1"
+	agenda-group "increase-rules"
+
+    when
+        Bill($base: base)
+        $amount: Double(this > 0.4 * $base)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.9 * $amount);}
+
+end
+
+rule "90% increase pt2"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type == BillType.RSD, balance > 300000)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.9 * $amount);}
+
+end
+
+rule "90% increase pt3"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type != BillType.RSD, balance > 3000)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.9 * $amount);}
+
+end
+
+rule "90% increase pt4"
+	agenda-group "increase-rules"
+
+    when
+        $amount: Double()
+        Bill($base: base, $transactions: transactions)
+        Number(doubleValue > 0.5 * $base) from accumulate(
+        	Transaction($temp: amount, passedMonths() <= 5) from $transactions,
+        	sum($temp)
+        )
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.9 * $amount);}
+
+end
+
+rule "80% increase pt1"
+	agenda-group "increase-rules"
+
+    when
+		Bill($base: base)
+        $amount: Double(this > 0.35 * $base)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.8 * $amount);}
+
+end
+
+rule "80% increase pt2"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type == BillType.RSD, balance > 250000)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.8 * $amount);}
+
+end
+
+rule "80% increase pt3"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type != BillType.RSD, balance > 2500)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.8 * $amount);}
+
+end
+
+rule "80% increase pt4"
+	agenda-group "increase-rules"
+
+    when
+        $amount: Double()
+        Bill($base: base, $transactions: transactions)
+        Number(doubleValue > 0.45 * $base) from accumulate(
+        	Transaction($temp: amount, passedMonths() <= 6) from $transactions,
+        	sum($temp)
+        )
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.8 * $amount);}
+
+end
+
+rule "70% increase pt1"
+	agenda-group "increase-rules"
+
+    when
+		Bill($base: base)
+        $amount: Double(this > 0.3 * $base)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.7 * $amount);}
+
+end
+
+rule "70% increase pt2"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type == BillType.RSD, balance > 200000)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.7 * $amount);}
+
+end
+
+rule "70% increase pt3"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type != BillType.RSD, balance > 2000)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.7 * $amount);}
+
+end
+
+rule "70% increase pt4"
+	agenda-group "increase-rules"
+
+    when
+        $amount: Double()
+        Bill($base: base, $transactions: transactions)
+        Number(doubleValue > 0.4 * $base) from accumulate(
+        	Transaction($temp: amount, passedMonths() <= 7) from $transactions,
+        	sum($temp)
+        )
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.7 * $amount);}
+
+end
+
+rule "60% increase pt1"
+	agenda-group "increase-rules"
+
+    when
+    	Bill($base: base)
+        $amount: Double(this > 0.25 * $base)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.6 * $amount);}
+
+end
+
+rule "60% increase pt2"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type == BillType.RSD, balance > 150000)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.6 * $amount);}
+
+end
+
+rule "60% increase pt3"
+	agenda-group "increase-rules"
+
+    when
+    	$amount: Double()
+        Bill(type != BillType.RSD, balance > 1500)
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.6 * $amount);}
+
+end
+
+rule "60% increase pt4"
+	agenda-group "increase-rules"
+
+    when
+        $amount: Double()
+        Bill($base: base, $transactions: transactions)
+        Number(doubleValue > 0.35 * $base) from accumulate(
+        	Transaction($temp: amount, passedMonths() <= 8) from $transactions,
+        	sum($temp)
+        )
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.6 * $amount);}
+
+end
+
+rule "50% increase"
+	agenda-group "increase-rules"
+
+    when
+        $amount: Double()
+        $response: IncreaseResponse(valid, baseUpdate == null)
+    then
+		modify($response){setBaseUpdate(0.5 * $amount);}
+
+end
+

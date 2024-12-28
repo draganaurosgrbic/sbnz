@@ -1,0 +1,99 @@
+package rules
+import com.example.demo.model.Account
+import com.example.demo.model.Bill
+import com.example.demo.model.BillStatus
+import com.example.demo.model.BillType
+import com.example.demo.model.Transaction
+import com.example.demo.model.Renewal
+import java.util.List
+import com.example.demo.service.ExchangeRateService
+
+global ExchangeRateService rateService;
+
+
+rule "First report"
+	agenda-group "first-report"
+	no-loop
+
+    when
+        $accounts: List()
+
+        accumulate(
+        	Account($a: this, passedYears() >= 5, $bills: bills) from $accounts 
+        	and Number(intValue > 10) from accumulate(
+        		Bill($b: this, passedMonths() <= 18) from $bills,
+        		count($b)
+        	)
+        	and Number(doubleValue > 10000000) from accumulate(
+        		Bill(passedMonths() <= 18, $base: base) from $bills,
+	        	sum($base)
+        	),
+        	$result: collectSet($a)
+        )
+
+    then
+        modify($accounts) {clear(), addAll($result)}
+
+end
+
+rule "Second report"
+	agenda-group "second-report"
+	no-loop
+
+    when
+        $accounts: List()
+
+        accumulate(
+        	Account($a: this, $bills: bills) from $accounts 
+        	and Number(intValue <= 0) from accumulate(
+        		Bill($b: this, status == BillStatus.ABORTED) from $bills,
+        		count($b)
+        	)
+        	and Number(intValue > 10) from accumulate(
+        		Bill($b: this, months() > 8, passedMonths() <= 18) from $bills,
+	        	count($b)
+        	)
+        	and Number(doubleValue > 1000000) from accumulate(
+        		Bill(passedMonths() <= 12, type != BillType.RSD, $type: type, $base: base) from $bills,
+        		sum(rateService.convertToRSD($type, $base)) 
+        	),
+        	$result: collectSet($a)
+        )
+        
+    then
+        modify($accounts) {clear(), addAll($result)}
+
+end
+
+rule "Third report"
+	agenda-group "third-report"
+	no-loop
+
+    when
+        $accounts: List()
+
+        accumulate(
+        	Account($a: this, $bills: bills) from $accounts 
+			and accumulate(
+				Bill($transactions: transactions, $renewals: renewals) from $bills 
+	        	and accumulate(
+	        		Renewal($r: this, $amount: amount) from $renewals,
+	        		$rCnt: count($r),
+	        		$rAvg: average($amount)
+	        	) 
+	        	and accumulate(
+	        		Transaction($type: bill.type, $amount: amount) from $transactions,
+	        		$tAvg: average(rateService.convertToRSD($type, $amount))
+	        	),
+	        	$stat1: sum($rCnt),
+	        	$stat2: average($rAvg),
+	        	$stat3: average($tAvg);
+				$stat1 >= 5 && $stat2 >= 6 && $stat3 > 500000
+			),
+	        $result: collectSet($a)
+        )
+
+    then
+        modify($accounts) {clear(), addAll($result)}
+
+end
